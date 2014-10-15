@@ -27,6 +27,24 @@ namespace common
         value_type const & operator *  () const { return *it_;  }
         value_type const * operator -> () const { return &*it_; }
 
+        value_type const next()
+        {
+            ++(*this);
+            value_type next = *it_;
+            --(*this);
+
+            return next;
+        }
+
+        value_type const prev()
+        {
+            --(*this);
+            value_type prev = *it_;
+            ++(*this);
+
+            return prev;
+        }
+
         iterator_type iter() const { return it_; }
 
         range_circulator & operator ++ () 

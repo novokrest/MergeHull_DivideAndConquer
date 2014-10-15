@@ -124,15 +124,21 @@ bool is_tangent(point_type const & p1, point_type const & p2, contour_type const
     return true;
 }
 
-void find_tangent(contour_circulator & circular_A, contour_circulator & circular_B,
-                  contour_type const & A, contour_type const & B)
+bool is_tangent(point_type const & p1, point_type const & p2, point_type const & p3)
 {
-    while (!is_tangent(*circular_A, *circular_B, A)
-           || !is_tangent(*circular_A, *circular_B, B)) {
-        while (!is_tangent(*circular_A, *circular_B, A)) {
+    using namespace geom::predicates;
+
+    return turn(p1, p2, p3) != RIGHT;
+}
+
+void find_tangent(contour_circulator & circular_A, contour_circulator & circular_B)
+{
+    while (!is_tangent(*circular_A, *circular_B, circular_A.prev())
+           || !is_tangent(*circular_A, *circular_B, circular_B.next())) {
+        while (!is_tangent(*circular_A, *circular_B, circular_A.prev())) {
             --circular_A;
         }
-        while (!is_tangent(*circular_A, *circular_B, B)) {
+        while (!is_tangent(*circular_A, *circular_B, circular_B.next())) {
             ++circular_B;
         }
     }
@@ -285,14 +291,14 @@ contour_type merge(contour_type const & A, contour_type const & B)
     /*find lower tangent*/
     set_rightmost(circular_A);
     set_leftmost(circular_B);
-    find_tangent(circular_A, circular_B, A, B);
+    find_tangent(circular_A, circular_B);
     contour_circulator a_down(circular_A);
     contour_circulator b_down(circular_B);
 
     /*find upper tangent*/
     set_rightmost(circular_A);
     set_leftmost(circular_B);
-    find_tangent(circular_B, circular_A, B, A);
+    find_tangent(circular_B, circular_A);
     contour_circulator a_up(circular_A);
     contour_circulator b_up(circular_B);
 
